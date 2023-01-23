@@ -1,0 +1,35 @@
+{
+  "name": "vtt",
+  "version": "0.0.1",
+  "description": "Vector Tile Transform",
+  "main": "vtt.js",
+  "author": "yetzt <node@yetzt.me>",
+  "license": "Unlicense",
+  "dependencies": {
+    "pbf": "^3"
+  },
+  "keywords": [
+    "vt",
+    "vector",
+    "tile",
+    "tiles",
+    "maps",
+    "map",
+    "pbf",
+    "mvt",
+    "stream",
+    "vector-tile",
+    "vectortile",
+    "modify",
+    "edit",
+    "change"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yetzt/node-vtt.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yetzt/node-vtt/issues"
+  },
+  "homepage": "https://github.com/yetzt/node-vtt#readme"
+}
