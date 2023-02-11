@@ -1,6 +1,6 @@
 {
   "name": "vtt",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Vector Tile Transform",
   "main": "vtt.js",
   "author": "yetzt <node@yetzt.me>",
