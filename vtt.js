@@ -27,7 +27,7 @@ const vtt = module.exports = function vtt(){
 const unpack = module.exports.unpack = function unpack(buf){
 	return (new pbf(buf)).readFields(function(tag, layers, pb){
 		if (tag === 0x3) {
-			
+
 			const layer = {
 				version: 1,
 				name: null,
@@ -42,7 +42,7 @@ const unpack = module.exports.unpack = function unpack(buf){
 					case 0xf: l.version = pb.readVarint(); break;
 					case 0x1: l.name = pb.readString(); break;
 					case 0x5: l.extent = pb.readVarint(); break;
-					case 0x2: 
+					case 0x2:
 						const feature = { type: 0, properties: [], geometry: -1 };
 						pb.readFields(function(tag, f, pb) {
 							let end;
@@ -85,7 +85,7 @@ const unpack = module.exports.unpack = function unpack(buf){
 						l.features.push(feature);
 					break;
 					case 0x3: l.keys.push(pb.readString()); break;
-					case 0x4: 
+					case 0x4:
 						let end = (pb.readVarint()+pb.pos);
 						while (pb.pos < end) {
 							switch (pb.readVarint() >> 3) {
@@ -108,10 +108,10 @@ const unpack = module.exports.unpack = function unpack(buf){
 					return p[layer.keys[v[0]]]=layer.values[v[1]],p;
 				},{}), f;
 			});
-			
+
 			layers.push(layer);
 		}
-			
+
 	}, []);
 };
 
@@ -120,15 +120,15 @@ const pack = module.exports.pack = function js2pbf(tile){
 	const pb = new pbf();
 
 	tile.map(function(layer){
-		
+
 		// destruct properties
 		const keys = {};
 		const values = {};
 		let kidx = 0;
 		let vidx = 0;
-		
+
 		layer.features = layer.features.map(function(feature){
-			
+
 			feature.properties = Object.entries(feature.properties).filter(function([ k, v ]){
 				return (v === null || typeof v !== undefined);
 			}).map(function([ k, v ]){
@@ -139,29 +139,29 @@ const pack = module.exports.pack = function js2pbf(tile){
 				if (!keys.hasOwnProperty(k)) keys[k] = kidx++;
 				if (!values.hasOwnProperty(vk)) values[vk] = [ vidx++, v ];
 				return [ keys[k], values[vk][0] ];
-				
+
 			});
-			
+
 			return feature;
-			
+
 		});
-		
+
 		// flatten keys and values
 		layer.keys = Object.entries(keys).reduce(function(l, [ k, v ]){ return l[v]=k,l },[]);
 		layer.values = Object.entries(values).reduce(function(l, [ k, v ]){ return l[v[0]]=v[1],l },[]);
-		
+
 		return layer;
-		
+
 	}).forEach(function(layer){
-			
+
 		// construct protobuf
 		pb.writeMessage(3, function(l, p){
-			
+
 			// write version, name and extent
 			pb.writeVarintField(15, layer.version || 1);
 			pb.writeStringField(1, layer.name || "");
 			pb.writeVarintField(5, layer.extent || 4096);
-			
+
 			// write keys
 			layer.keys.forEach(function(k){
 				pb.writeStringField(3, k);
@@ -186,12 +186,12 @@ const pack = module.exports.pack = function js2pbf(tile){
 						break;
 					}
 				}, v);
-				
+
 			});
 
 			// write features
 			layer.features.forEach(function(feature){
-				
+
 				// write feature
 				pb.writeMessage(2, function(){
 
@@ -206,7 +206,7 @@ const pack = module.exports.pack = function js2pbf(tile){
 							pb.writeVarint(property[1]); // value-id
 						});
 					}, feature.properties);
-					
+
 					// write geometry — https://github.com/mapbox/vector-tile-spec/blob/master/2.1/README.md#43-geometry-encoding
 					pb.writeMessage(4, function(feature, pb){
 						let x = 0, y = 0;
@@ -234,7 +234,7 @@ const pack = module.exports.pack = function js2pbf(tile){
 			});
 		}, layer);
 	});
-	
+
 	return pb.finish();
 
 };
