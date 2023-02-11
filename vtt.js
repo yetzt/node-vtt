@@ -16,8 +16,10 @@ const vtt = module.exports = function vtt(){
 			const s = this;
 			if (!fn) return s.emit("error", new Error("Missing Modify Function")), done();
 			fn(unpack(Buffer.concat(buf)), function(err, data){ // FIXME error?
-				if (err) return s.emit("error", new Error(err)), done();
-				s.emit("data", pack(data)), done();
+				if (err) return s.emit("error", new Error(err)), s.emit("end"), done();
+				if (data) s.emit("data", pack(data));
+				s.emit("end");
+				done();
 			});
 		}
 	});
